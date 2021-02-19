@@ -57,6 +57,9 @@ module.exports = app => {
   app.post('/api/surveys', requireLogin, requireCredits, async (req, res) => {
     const { title, subject, body, recipients } = req.body;
 
+    console.log("backend surveys: body", req.body)
+    console.log("backend surveys: user", req.user.id)
+
     const survey = new Survey({
       title,
       subject,
@@ -69,6 +72,8 @@ module.exports = app => {
     // Great place to send an email!
     const mailer = new Mailer(survey, surveyTemplate(survey));
 
+    console.log("mailer", mailer)
+
     try {
       await mailer.send();
       await survey.save();
@@ -77,6 +82,7 @@ module.exports = app => {
 
       res.send(user);
     } catch (err) {
+      console.log("erro", err)
       res.status(422).send(err);
     }
   });
